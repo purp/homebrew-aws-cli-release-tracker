@@ -8,6 +8,9 @@ Non-blocking items deferred from the final whole-branch review (the site data is
 - **News scroller accessibility** (`site/src/components/NewsScroller.tsx`): the marquee duplicates its item list for a seamless loop, but the second copy isn't `aria-hidden`, so screen readers announce every item twice. Add `aria-hidden="true"` to the duplicate half.
 - **Empty-window rendering** (`site/src/components/HeadlineStats.tsx` / `ingest/src/export.ts`): `summarize([])` returns `{mean:0,…,n:0}`, so a window with no bottled releases renders as `0m` ("instant") rather than "no data". Render `—`/"no data" when `n === 0`.
 
+## CI
+- **Bump deprecated GitHub Actions off Node 20** (`.github/workflows/*.yml`): `actions/checkout@v4`, `actions/setup-node@v4`, `actions/configure-pages@v5`, and `actions/upload-artifact@v4` still target Node 20, which the runner now force-runs on Node 24 with a deprecation warning. Cosmetic today, but GitHub will eventually drop the fallback. Bump to the versions that ship a Node 24 runtime when available.
+
 ## Robustness / tests
 - **More ingest edge tests**: formula-mismatch skip in `runIngest`; `resolveToken` `gh auth token` fallback. (The quiet-week cursor case is now covered.)
 
