@@ -12,7 +12,7 @@ export type Issue727Fn = () => Promise<Issue727Data>;
 
 export interface GithubClient {
   fetchAwscliTags(sinceIso: string): Promise<AwscliTag[]>;
-  fetchFormulaCommits(formula: Formula, opts: { sinceIso: string; stopAtSha?: string }): Promise<HbCommit[]>;
+  fetchFormulaCommits(formula: Formula, opts: { sinceIso: string; stopAtSha?: string }): Promise<{ commits: HbCommit[]; currentHeadSha: string | undefined }>;
   fetchIssue727(): Promise<Issue727Data>;
 }
 
@@ -75,16 +75,18 @@ export function makeGithubClient(deps: { graphql: GraphqlFn; commitsPage: Commit
       return out;
     },
 
-    async fetchFormulaCommits(formula, opts): Promise<HbCommit[]> {
+    async fetchFormulaCommits(formula, opts): Promise<{ commits: HbCommit[]; currentHeadSha: string | undefined }> {
       const since = Date.parse(opts.sinceIso);
       const out: HbCommit[] = [];
       const paths = formulaPaths(formula);
+      let currentHeadSha: string | undefined;
       for (let i = 0; i < paths.length; i++) {
         const path = paths[i];
         const stopAtSha = i === 0 ? opts.stopAtSha : undefined;
         for (let page = 1; ; page++) {
           const commits = await deps.commitsPage(path, page);
           if (commits.length === 0) break;
+          if (i === 0 && page === 1) currentHeadSha = commits[0].sha; // head of the current sharded path
           let stop = false;
           for (const c of commits) {
             if (stopAtSha && c.sha === stopAtSha) { stop = true; break; }
@@ -94,7 +96,7 @@ export function makeGithubClient(deps: { graphql: GraphqlFn; commitsPage: Commit
           if (stop) break;
         }
       }
-      return out;
+      return { commits: out, currentHeadSha };
     },
 
     fetchIssue727: deps.issue727,

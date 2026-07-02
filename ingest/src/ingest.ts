@@ -13,7 +13,7 @@ export async function runIngest(db: AppDb, gh: GithubClient, opts: { windowStart
   for (const formula of FORMULAS) {
     const cursorKey = `cursor:${formula}`;
     const stopAtSha = getMeta(db, cursorKey);
-    const commits = await gh.fetchFormulaCommits(formula, { sinceIso: opts.windowStart, stopAtSha });
+    const { commits, currentHeadSha } = await gh.fetchFormulaCommits(formula, { sinceIso: opts.windowStart, stopAtSha });
     for (const c of commits) {
       const parsed = parseHomebrewCommit(c.message);
       if (!parsed || parsed.formula !== formula) continue;
@@ -23,6 +23,6 @@ export async function runIngest(db: AppDb, gh: GithubClient, opts: { windowStart
         upsertHomebrewBottle(db, { formula, version: parsed.version, commitSha: c.sha, at: c.date });
       }
     }
-    if (commits.length > 0) setMeta(db, cursorKey, commits[0].sha);
+    if (currentHeadSha) setMeta(db, cursorKey, currentHeadSha);
   }
 }

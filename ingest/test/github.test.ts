@@ -51,8 +51,9 @@ describe('fetchFormulaCommits', () => {
       commitsPage: async (path, page) => (path === 'Formula/a/awscli.rb' && page === 1 ? page1 : []),
       issue727: async () => ({ state: 'open', createdAt: 'x', closedAt: null, url: 'u' }),
     });
-    const out = await gh.fetchFormulaCommits('awscli', { sinceIso: '2020-01-01T00:00:00Z', stopAtSha: 'f1' });
-    expect(out.map((c) => c.sha)).toEqual(['b1']); // stops before f1
+    const { commits, currentHeadSha } = await gh.fetchFormulaCommits('awscli', { sinceIso: '2020-01-01T00:00:00Z', stopAtSha: 'f1' });
+    expect(commits.map((c) => c.sha)).toEqual(['b1']); // stops before f1
+    expect(currentHeadSha).toBe('b1'); // current path's page-1 first sha
   });
   it('stops at the window boundary', async () => {
     const gh = makeGithubClient({
@@ -61,8 +62,8 @@ describe('fetchFormulaCommits', () => {
         path === 'Formula/a/awscli.rb' ? (page === 1 ? page1 : page === 2 ? page2 : []) : [],
       issue727: async () => ({ state: 'open', createdAt: 'x', closedAt: null, url: 'u' }),
     });
-    const out = await gh.fetchFormulaCommits('awscli', { sinceIso: '2020-01-01T00:00:00Z' });
-    expect(out.map((c) => c.sha)).toEqual(['b1', 'f1']); // 'old' is pre-window, dropped
+    const { commits } = await gh.fetchFormulaCommits('awscli', { sinceIso: '2020-01-01T00:00:00Z' });
+    expect(commits.map((c) => c.sha)).toEqual(['b1', 'f1']); // 'old' is pre-window, dropped
   });
   it('reads the legacy pre-shard path too and merges newest-first', async () => {
     const current: HbCommit[] = [{ sha: 'c1', date: '2024-01-01T00:00:00Z', message: 'awscli 2.20.0' }];
@@ -77,8 +78,26 @@ describe('fetchFormulaCommits', () => {
       },
       issue727: async () => ({ state: 'open', createdAt: 'x', closedAt: null, url: 'u' }),
     });
-    const out = await gh.fetchFormulaCommits('awscli', { sinceIso: '2020-01-01T00:00:00Z' });
-    expect(out.map((c) => c.sha)).toEqual(['c1', 'l1']);
+    const { commits, currentHeadSha } = await gh.fetchFormulaCommits('awscli', { sinceIso: '2020-01-01T00:00:00Z' });
+    expect(commits.map((c) => c.sha)).toEqual(['c1', 'l1']);
+    expect(currentHeadSha).toBe('c1'); // current path's page-1 first sha
+  });
+  it('keeps the cursor on the current path head during a quiet week (does not revert to a legacy sha)', async () => {
+    const gh = makeGithubClient({
+      graphql: async () => ({}),
+      commitsPage: async (path, page) => {
+        if (page !== 1) return [];
+        // current path: only the already-seen cursor commit (no new work)
+        if (path === 'Formula/a/awscli.rb') return [{ sha: 'cur1', date: '2026-01-01T00:00:00Z', message: 'awscli 2.30.0' }];
+        // legacy path: re-paged, older in-window commits
+        if (path === 'Formula/awscli.rb') return [{ sha: 'leg1', date: '2021-05-01T00:00:00Z', message: 'awscli 2.2.0' }];
+        return [];
+      },
+      issue727: async () => ({ state: 'open', createdAt: 'x', closedAt: null, url: 'u' }),
+    });
+    const { commits, currentHeadSha } = await gh.fetchFormulaCommits('awscli', { sinceIso: '2020-01-01T00:00:00Z', stopAtSha: 'cur1' });
+    expect(commits.map((c) => c.sha)).toEqual(['leg1']); // current stops at cursor; legacy still merged
+    expect(currentHeadSha).toBe('cur1');                 // cursor stays on the CURRENT path head, not 'leg1'
   });
 });
 
