@@ -31,6 +31,7 @@ Two things changed since the gist: aws-cli now has **two lines** — v1 (git `de
 | aws-cli releases | GraphQL `repository.refs(refPrefix:"refs/tags/")` → resolve each tag target to a `Commit.committedDate` | Tags are `1.x` (v1) and `2.x` (v2) in the **same repo** `aws/aws-cli`. AWS does **not** use GitHub Releases, so the **tag commit date is the release moment**. Handle both lightweight and annotated tags via inline fragments. |
 | Homebrew v2 updates | REST `commits?path=Formula/a/awscli.rb` | Parse commit messages (see below). |
 | Homebrew v1 updates | REST `commits?path=Formula/a/awscli@1.rb` | Same parsing, `awscli@1` prefix. |
+| Issue #727 status | REST `issues/727` | `state`, `created_at`, `closed_at` — powers the **hero days-open counter**. |
 
 **Auth:** `GITHUB_TOKEN` (locally `gh auth token`). Well within rate limits.
 
@@ -93,6 +94,8 @@ WHERE h.revision = 0;
 
 ## Metrics & Stats
 
+**Hero — Issue #727 days-open counter.** The site's whole point. Status (`open`/`closed`) comes from the GitHub API at ingestion; the **days count ticks live client-side** from `created_at` (2014-03-29T22:32:43Z), so it's accurate on every page load, not just after a weekly refresh. Open → *"Still open 😩 — N days and counting"*; if it ever flips → *"CLOSED 🎉 — after N days"* using `closed_at − created_at`. As of 2026-07-02: ~4,478 days (~12.3 years).
+
 Three timestamps per shipped release: **T0** = aws-cli tag commit · **T1** = Homebrew formula merge · **T2** = Homebrew bottle. Clean decomposition: **total = notice + build**.
 
 | # | Metric | Definition | Display |
@@ -111,6 +114,8 @@ Also computed: **coverage** (aws-cli releases in window vs. count Homebrew shipp
 {
   "generatedAt": "2026-07-02T12:00:00Z",
   "windowStart": "2020-01-01",
+  "issue727": { "state": "open", "createdAt": "2014-03-29T22:32:43Z", "closedAt": null,
+                "url": "https://github.com/aws/aws-cli/issues/727" },
   "headline": {
     "totalBottleLag":     { "d30": {"mean":.., "median":.., "p90":.., "n":..}, "d90": {..}, "y1": {..}, "all": {..} },
     "noticeLatency":      { "y1": {..}, "all": {..} },
@@ -130,11 +135,12 @@ All durations in **hours** (number); formatted human-friendly client-side (`3h 1
 
 - **Build:** Vite → `dist/`; `base: '/aws-cli-release-tracker/'` (project Pages path; configurable). Imports `data/data.json` via a Vite path alias (`@data`) — build-time, type-safe, no runtime fetch/base-path issues.
 - **Layout (top → bottom):**
-  1. **Headline stat cards** — ① Total bottle lag big, with the 30d/90d/1y/all-time breakdown; ② Notice latency; ③ Bottle build latency. Median/p90 in tooltips.
-  2. **Main graph** — Recharts scatter of **total bottle lag over time** (x = release date, y = lag, colored v1/v2) with a rolling-average line. Y-axis in hours, likely log-scaled to span minutes→days.
-  3. **Recent releases table** — version · aws date · notice lag · build lag · total lag.
-  4. **Maintenance-mode note** — `awscli@1` enters maintenance mode 2026-07-15.
-  5. **News scroller** (below).
+  1. **Hero card — Issue #727 status + live days-open counter.** Biggest element on the page; the days number counts up live from `created_at` (client-side `setInterval`), status pulled from `issue727` in the JSON. This is the punchline the whole site builds to.
+  2. **Headline stat cards** — ① Total bottle lag big, with the 30d/90d/1y/all-time breakdown; ② Notice latency; ③ Bottle build latency. Median/p90 in tooltips.
+  3. **Main graph** — Recharts scatter of **total bottle lag over time** (x = release date, y = lag, colored v1/v2) with a rolling-average line. Y-axis in hours, likely log-scaled to span minutes→days.
+  4. **Recent releases table** — version · aws date · notice lag · build lag · total lag.
+  5. **Maintenance-mode note** — `awscli@1` enters maintenance mode 2026-07-15.
+  6. **News scroller** (below).
 
 ### News scroller (`site/src/news.ts` — curated, static)
 A horizontally-scrolling ticker titled **"Events since aws-cli #727 was filed"**, tone = funny, emphasizing the 12-year open request. Anchored, factual milestones interleaved with world events that came and went during the wait:
