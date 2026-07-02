@@ -1,0 +1,10 @@
+{
+  "name": "aws-cli-release-tracker",
+  "private": true,
+  "type": "module",
+  "workspaces": ["ingest", "site"],
+  "scripts": {
+    "refresh": "npm -w ingest run refresh",
+    "test": "npm -w ingest run test"
+  }
+}
