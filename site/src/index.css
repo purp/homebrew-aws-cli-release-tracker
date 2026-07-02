@@ -1,0 +1,35 @@
+:root {
+  --bg: #0f1117; --panel: #171a23; --ink: #e7e9ee; --muted: #9aa3b2;
+  --v2: #ff9900; --v1: #3b82f6; --accent: #ffcc66;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); }
+.page { max-width: 980px; margin: 0 auto; padding: 2rem 1rem 0; }
+.page__head h1 { font-size: clamp(1.6rem, 4vw, 2.6rem); margin: 0 0 .25rem; }
+.page__sub { color: var(--muted); margin: 0 0 1.5rem; }
+.hero { text-align: center; padding: 2rem 1rem; background: var(--panel); border-radius: 16px; margin-bottom: 1.5rem; }
+.hero__kicker { color: var(--muted); margin: 0; } .hero__kicker a { color: var(--accent); }
+.hero__count { margin: .5rem 0; } .hero__num { font-size: clamp(3rem, 12vw, 6rem); font-weight: 800; color: var(--accent); }
+.hero__status { font-size: 1.2rem; margin: 0; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+.stat { background: var(--panel); border-radius: 12px; padding: 1.25rem; }
+.stat--hero { grid-column: 1 / -1; } .stat--hero .stat__value { font-size: 3rem; }
+.stat__label { color: var(--muted); font-size: .9rem; } .stat__label span { opacity: .7; }
+.stat__value { font-size: 2rem; font-weight: 700; }
+.stat__windows { display: flex; gap: 1rem; flex-wrap: wrap; color: var(--muted); margin-top: .5rem; }
+.stat__sub { color: var(--muted); margin-top: .25rem; }
+.chart, .recent { background: var(--panel); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; }
+.chart h2, .recent h2 { margin: 0 0 1rem; font-size: 1.1rem; }
+.recent__scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: .5rem .75rem; border-bottom: 1px solid #262a35; white-space: nowrap; }
+th { color: var(--muted); font-weight: 600; }
+.note { color: var(--muted); text-align: center; }
+.ticker { overflow: hidden; background: #000; border-radius: 12px; padding: .75rem 0; margin: 1.5rem 0; }
+.ticker__label { color: var(--accent); font-weight: 700; padding: 0 1rem .5rem; }
+.ticker__track { display: inline-flex; gap: 3rem; white-space: nowrap; animation: scroll 120s linear infinite; }
+.ticker__item { color: var(--ink); }
+@keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .ticker__track { animation: none; } }
+.page__foot { color: var(--muted); text-align: center; padding: 2rem 1rem 3rem; font-size: .9rem; }
