@@ -17,9 +17,9 @@ export function HeroCounter({ issue727 }: { issue727: Issue727 }) {
   return (
     <section className="hero">
       <p className="hero__kicker">
-        aws-cli issue <a href={live.url}>#727</a> ("Install aws-cli using Homebrew") {open ? 'is' : 'was'}…
+        aws-cli issue <a href={live.url}>#727</a> to add <code>brew install awscli</code> to <code>README.md</code>
       </p>
-      <p className="hero__count"><span className="hero__num">{days.toLocaleString()}</span> days old</p>
+      <p className="hero__count">{open ? 'is' : 'was'} <span className="hero__num">{days.toLocaleString()}</span> days old</p>
       <p className="hero__status">
         {open ? '… and counting 😩' : `when it finally was closed 🎉`}
       </p>

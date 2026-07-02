@@ -1,8 +1,19 @@
+import { useMemo, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid } from 'recharts';
 import type { SeriesPoint } from '../types.js';
 import { formatDuration, formatDate } from '../format.js';
 
 const WEEK_MS = 7 * 86_400_000;
+const DAY_MS = 86_400_000;
+
+// Time-range presets; `days: null` means all time. Default is 1y (see useState below).
+const RANGES = [
+  { label: '30d', days: 30 },
+  { label: '60d', days: 60 },
+  { label: '90d', days: 90 },
+  { label: '1y', days: 365 },
+  { label: 'All', days: null },
+] as const;
 
 interface WeekRow { t: number; v1: number | null; v2: number | null }
 
@@ -25,10 +36,36 @@ function weeklyMeans(series: SeriesPoint[]): WeekRow[] {
 }
 
 export function LagChart({ series }: { series: SeriesPoint[] }) {
-  const rows = weeklyMeans(series);
+  const allRows = useMemo(() => weeklyMeans(series), [series]);
+  const [days, setDays] = useState<number | null>(365); // default 1y
+
+  // Window is anchored to the most recent week of data, not wall-clock now, so
+  // the view stays stable between weekly data refreshes and always frames the latest releases.
+  const rows = useMemo(() => {
+    if (days === null || allRows.length === 0) return allRows;
+    const lastT = allRows[allRows.length - 1].t;
+    const cutoff = lastT - days * DAY_MS;
+    return allRows.filter((r) => r.t >= cutoff);
+  }, [allRows, days]);
+
   return (
     <section className="chart">
-      <h2>Weekly average — aws-cli release → installable Homebrew bottle</h2>
+      <div className="chart__head">
+        <h2>Weekly average — aws-cli release → installable Homebrew bottle</h2>
+        <div className="chart__ranges" role="group" aria-label="Time range">
+          {RANGES.map((r) => (
+            <button
+              key={r.label}
+              type="button"
+              className={r.days === days ? 'chart__range chart__range--active' : 'chart__range'}
+              aria-pressed={r.days === days}
+              onClick={() => setDays(r.days)}
+            >
+              {r.label}
+            </button>
+          ))}
+        </div>
+      </div>
       <ResponsiveContainer width="100%" height={260}>
         <LineChart data={rows} margin={{ top: 8, right: 16, bottom: 4, left: 8 }}>
           <CartesianGrid strokeDasharray="3 3" opacity={0.15} />
