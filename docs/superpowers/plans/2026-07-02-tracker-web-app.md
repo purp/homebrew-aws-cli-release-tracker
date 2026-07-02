@@ -43,7 +43,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "test": "vitest run"
   },
@@ -118,8 +118,15 @@ export default defineConfig({
 
 - [ ] **Step 5: Create `site/test/setup.ts`**
 
+Also stub `fetch` globally so component tests never hit the network — the #727 live fetch then fails cleanly and components fall back to their baseline prop. Tests that exercise `fetchIssue727Live` directly pass their own `fetchImpl` and are unaffected.
+
 ```ts
 import '@testing-library/jest-dom/vitest';
+import { vi } from 'vitest';
+
+// No real network in tests: live #727 fetch resolves to a non-OK response,
+// so useIssue727 falls back to the baseline it was given.
+vi.stubGlobal('fetch', vi.fn(async () => ({ ok: false, status: 403, json: async () => ({}) })));
 ```
 
 - [ ] **Step 6: Create `site/src/types.ts` (mirror of `ingest/src/export.ts`)**

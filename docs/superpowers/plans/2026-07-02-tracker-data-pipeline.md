@@ -1183,7 +1183,7 @@ Expected: prints "Fetching from GitHub…" then a summary line; creates `data/tr
 Run: `sqlite3 data/tracker.sqlite "SELECT major, COUNT(*) FROM awscli_release GROUP BY major; SELECT COUNT(*) FROM tracking;"`
 Expected: nonzero counts for majors 1 and 2, and a nonzero tracking count.
 
-Run: `node --experimental-strip-types -e "const d=require('./data/data.json'); console.log(d.headline.totalBottleLag.y1, d.coverage.overall)"` *(or just open `data/data.json`)*
+Run: `node -e "const d=JSON.parse(require('fs').readFileSync('data/data.json','utf8')); console.log(d.headline.totalBottleLag.y1, d.coverage.overall, d.issue727.state)"`
 Expected: `y1.n > 0`; `coverage.overall.pct` between 0 and 100; `issue727.state === 'open'`.
 
 - [ ] **Step 4: Commit code + generated data**
