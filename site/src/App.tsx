@@ -15,7 +15,7 @@ export function App() {
         <p className="page__sub">Tracking how well the <code>awscli</code> package has kept up with each <code>aws-cli</code> release since 2020 · last updated {formatDate(data.generatedAt)} · updated weekly</p>
       </header>
       <HeroCounter issue727={data.issue727} />
-      <HeadlineStats headline={data.headline} />
+      <HeadlineStats headline={data.headline} series={data.series} />
       <LagChart series={data.series} />
       <RecentTable recent={data.recent.slice(0, 5)} />
       <NewsScroller items={NEWS} />

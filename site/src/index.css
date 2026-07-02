@@ -26,12 +26,13 @@ body { margin: 0; background: var(--bg); color: var(--ink); }
 .total__windows { display: flex; gap: 1.1rem; color: var(--muted); flex-wrap: wrap; font-size: .9rem; }
 .total__windows b { color: var(--ink); font-weight: 700; }
 .parts { display: flex; align-items: stretch; gap: .6rem; margin-top: .85rem; }
-.part { flex: 1; border-radius: 10px; padding: .6rem .85rem; }
+.part { flex: 1; border-radius: 10px; padding: .6rem .85rem; display: flex; align-items: center; justify-content: space-between; gap: .7rem; }
 .part--notice { background: rgba(59, 130, 246, .14); border: 1px solid rgba(59, 130, 246, .30); }
 .part--build  { background: rgba(255, 153, 0, .12);  border: 1px solid rgba(255, 153, 0, .30); }
+.part__body { min-width: 0; }
 .part__label { font-weight: 600; font-size: .95rem; }
 .part__value { font-size: 1.5rem; font-weight: 700; margin: .1rem 0; }
-.part__hint { color: var(--muted); font-size: .78rem; }
+.part__spark { flex: none; width: 116px; height: 34px; opacity: .9; }
 .parts__op { align-self: center; color: var(--muted); font-size: 1.5rem; font-weight: 700; }
 
 /* chart + recent table (compact) */
