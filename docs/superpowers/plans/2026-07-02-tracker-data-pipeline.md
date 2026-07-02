@@ -6,11 +6,11 @@
 
 **Architecture:** A TypeScript CLI (`ingest/`) fetches aws-cli `1.x`/`2.x` tag commit dates (GraphQL) and Homebrew `awscli`/`awscli@1` formula+bottle commits (REST), upserts them into `data/tracker.sqlite` incrementally, then computes stats and writes `data/data.json`. Pure logic (parsing, stats) is isolated from I/O (GitHub client, DB) so it's unit-testable; the GitHub client takes injected fetchers so ingestion is testable without the network.
 
-**Tech Stack:** Node ≥ 20 (ESM), TypeScript run via `tsx`, `better-sqlite3`, `octokit`, Vitest. npm workspaces at repo root.
+**Tech Stack:** Node ≥ 24 (ESM; ingest uses the **built-in `node:sqlite`** — no native modules to compile), TypeScript run via `tsx`, `octokit`, Vitest. npm workspaces at repo root.
 
 ## Global Constraints
 
-- **Node:** ≥ 20; all packages `"type": "module"` (ESM). Repo uses npm **workspaces** (`ingest`, `site`).
+- **Node:** ≥ 24 for the `ingest` pipeline — it uses the built-in `node:sqlite` (`DatabaseSync`), so there are **no native modules**. All packages `"type": "module"` (ESM). Repo uses npm **workspaces** (`ingest`, `site`).
 - **Window start:** `2020-01-01T00:00:00Z` — ignore any aws-cli release older than this. Constant name `WINDOW_START`.
 - **Formula ↔ major mapping:** `awscli` ⇔ major **2**; `awscli@1` ⇔ major **1**.
 - **GitHub targets:** aws-cli repo `aws/aws-cli`; Homebrew repo `Homebrew/homebrew-core`; formula paths `Formula/a/awscli.rb` and `Formula/a/awscli@1.rb`; issue `aws/aws-cli#727`.
@@ -70,12 +70,10 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "better-sqlite3": "^11.8.0",
     "octokit": "^4.1.0"
   },
   "devDependencies": {
-    "@types/better-sqlite3": "^7.6.0",
-    "@types/node": "^22.0.0",
+    "@types/node": "^24.0.0",
     "tsx": "^4.19.0",
     "typescript": "^5.6.0",
     "vitest": "^2.1.0"
@@ -114,7 +112,7 @@ export default defineConfig({
 - [ ] **Step 5: Install dependencies**
 
 Run: `npm install`
-Expected: installs workspaces; `node_modules/` present at root (already gitignored). `better-sqlite3` compiles its native binding.
+Expected: installs workspaces; `node_modules/` present at root (already gitignored). **No native modules to compile** — SQLite is Node's built-in `node:sqlite`.
 
 - [ ] **Step 6: Write the failing test** — `ingest/test/parse.test.ts`
 
@@ -340,7 +338,7 @@ Claude-Session: https://claude.ai/code/session_01YbcAbdkFNTQ76nEZ6RxqXm"
 **Interfaces:**
 - Consumes: `Formula` from `parse.ts`; `normalizeVersion`, `majorOf`.
 - Produces:
-  - `type DB = Database.Database` (re-export type alias `AppDb`)
+  - `type AppDb = DatabaseSync` (the `node:sqlite` database handle)
   - `openDb(path: string): AppDb` — opens/creates, runs `initSchema`, returns handle.
   - `initSchema(db: AppDb): void`
   - `upsertAwscliRelease(db, r: { version: string; major: number; tagName: string; commitSha: string; releasedAt: string }): void`
@@ -424,14 +422,13 @@ Expected: FAIL — module not found.
 - [ ] **Step 3: Write `ingest/src/db.ts`**
 
 ```ts
-import Database from 'better-sqlite3';
+import { DatabaseSync } from 'node:sqlite';
 import { normalizeVersion, majorOf, type Formula } from './parse.js';
 
-export type AppDb = Database.Database;
+export type AppDb = DatabaseSync;
 
 export function openDb(path: string): AppDb {
-  const db = new Database(path);
-  db.pragma('journal_mode = WAL');
+  const db = new DatabaseSync(path);
   initSchema(db);
   return db;
 }

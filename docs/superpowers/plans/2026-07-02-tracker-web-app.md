@@ -13,7 +13,7 @@
 ## Global Constraints
 
 - **Node:** ≥ 20; ESM; npm **workspace** `site` under the existing root `package.json`.
-- **Pages base path:** `/aws-cli-release-tracker/` (Vite `base`). Configurable for a future custom domain.
+- **Pages base path:** `/homebrew-aws-cli-release-tracker/` (Vite `base`). Configurable for a future custom domain.
 - **`@data` alias** → repo-root `data/data.json`. Components never import it directly — only `src/data.ts` does; components receive data via props.
 - **Data contract:** the `DataJson`/`SeriesPoint`/`Summary`/`CoverageEntry` shapes in Task 1 must match `ingest/src/export.ts` **exactly**. Durations are **hours** (number).
 - **Live #727 fetch:** `GET https://api.github.com/repos/aws/aws-cli/issues/727`, unauthenticated, at page load; on any failure fall back to `data.issue727`. The **days counter** is computed client-side from `issue727.createdAt` and never depends on the fetch.
@@ -95,7 +95,7 @@ import react from '@vitejs/plugin-react';
 import { resolve } from 'node:path';
 
 export default defineConfig({
-  base: '/aws-cli-release-tracker/',
+  base: '/homebrew-aws-cli-release-tracker/',
   plugins: [react()],
   resolve: { alias: { '@data': resolve(__dirname, '../data/data.json') } },
   server: { fs: { allow: ['..'] } },
@@ -239,7 +239,7 @@ Expected: PASS (reads the real committed `data/data.json`).
 - [ ] **Step 14: Verify the build works**
 
 Run: `npm -w site run build`
-Expected: `site/dist/` produced with `index.html` referencing `/aws-cli-release-tracker/assets/...`.
+Expected: `site/dist/` produced with `index.html` referencing `/homebrew-aws-cli-release-tracker/assets/...`.
 
 - [ ] **Step 15: Commit**
 
@@ -1013,7 +1013,7 @@ Expected: PASS.
 - [ ] **Step 7: Full check — all tests + build + local preview**
 
 Run: `npm -w site test && npm -w site run build && npm -w site run preview`
-Expected: all tests pass; build succeeds; preview serves at `/aws-cli-release-tracker/`. Visually confirm hero counter ticks, chart renders, scroller animates.
+Expected: all tests pass; build succeeds; preview serves at `/homebrew-aws-cli-release-tracker/`. Visually confirm hero counter ticks, chart renders, scroller animates.
 
 - [ ] **Step 8: Commit**
 
@@ -1106,7 +1106,7 @@ Claude-Session: https://claude.ai/code/session_01YbcAbdkFNTQ76nEZ6RxqXm"
 
 How closely does Homebrew track [aws-cli](https://github.com/aws/aws-cli) releases? This measures the lag from each aws-cli git tag to the Homebrew formula bump and the built bottle — and keeps a running tally of how long [aws-cli#727](https://github.com/aws/aws-cli/issues/727) has stayed open.
 
-**Live site:** https://purp.github.io/aws-cli-release-tracker/
+**Live site:** https://purp.github.io/homebrew-aws-cli-release-tracker/
 
 ## Layout
 - `ingest/` — TypeScript pipeline: GitHub API → `data/tracker.sqlite` → `data/data.json`.
@@ -1152,19 +1152,19 @@ Claude-Session: https://claude.ai/code/session_01YbcAbdkFNTQ76nEZ6RxqXm"
 
 - [ ] **Step 3: Create the remote and push** *(after user confirmation)*
 
-Run: `gh repo create aws-cli-release-tracker --public --source=. --remote=origin --push`
+Run: `gh repo create homebrew-aws-cli-release-tracker --public --source=. --remote=origin --push`
 Expected: repo created under the authenticated account, `main` pushed.
 
 - [ ] **Step 4: Enable Pages with the Actions build type**
 
-Run: `gh api -X POST repos/{owner}/aws-cli-release-tracker/pages -f build_type=workflow`
+Run: `gh api -X POST repos/{owner}/homebrew-aws-cli-release-tracker/pages -f build_type=workflow`
 Expected: 201/204. (If it errors because Pages is already/again configured, set it in Settings → Pages → Source: GitHub Actions.)
 
 - [ ] **Step 5: Trigger + verify the deploy**
 
 Run: `gh workflow run "Deploy site to Pages" && sleep 5 && gh run list --workflow=deploy.yml --limit 1`
 Then watch: `gh run watch $(gh run list --workflow=deploy.yml --limit 1 --json databaseId --jq '.[0].databaseId')`
-Expected: workflow succeeds; site live at `https://{owner}.github.io/aws-cli-release-tracker/`. Confirm the hero counter, chart, table, and scroller render.
+Expected: workflow succeeds; site live at `https://{owner}.github.io/homebrew-aws-cli-release-tracker/`. Confirm the hero counter, chart, table, and scroller render.
 
 ---
 
