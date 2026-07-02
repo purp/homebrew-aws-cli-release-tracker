@@ -20,7 +20,7 @@ Two things changed since the gist: aws-cli now has **two lines** — v1 (git `de
 ## Non-Goals
 
 - No runtime database or serverless functions — the site is fully static.
-- No live/on-visit fetching from GitHub — data changes weekly and is committed.
+- No live/on-visit fetching from GitHub **for the tracking dataset** — it changes weekly and is committed. (One deliberate exception: a single client-side call to refresh issue #727's open/closed status at page load — see below.)
 - No pre-2020 history — window starts **2020-01-01** (covers both v1 and v2 in their currently-relevant era).
 - Ingestion does **not** run on a schedule in CI — Cowork owns the weekly refresh (a GitHub Actions cron is a documented future alternative, not built now).
 
@@ -94,7 +94,7 @@ WHERE h.revision = 0;
 
 ## Metrics & Stats
 
-**Hero — Issue #727 days-open counter.** The site's whole point. Status (`open`/`closed`) comes from the GitHub API at ingestion; the **days count ticks live client-side** from `created_at` (2014-03-29T22:32:43Z), so it's accurate on every page load, not just after a weekly refresh. Open → *"Still open 😩 — N days and counting"*; if it ever flips → *"CLOSED 🎉 — after N days"* using `closed_at − created_at`. As of 2026-07-02: ~4,478 days (~12.3 years).
+**Hero — Issue #727 days-open counter.** The site's whole point. The **days count ticks live client-side** from `created_at` (2014-03-29T22:32:43Z), so it's accurate on every page load. **Status** (`open`/`closed`) is refreshed with a **single live client-side `fetch` of `api.github.com/repos/aws/aws-cli/issues/727` at page load** (public endpoint, `Access-Control-Allow-Origin: *`, unauthenticated) — so if #727 closes, the page reflects it immediately without waiting for a weekly refresh. The `issue727` block in `data.json` is the **baseline/fallback** when the live call fails (rate-limited/offline). Open → *"Still open 😩 — N days and counting"*; if it flips → *"CLOSED 🎉 — after N days"* using `closed_at − created_at`. As of 2026-07-02: ~4,478 days (~12.3 years).
 
 Three timestamps per shipped release: **T0** = aws-cli tag commit · **T1** = Homebrew formula merge · **T2** = Homebrew bottle. Clean decomposition: **total = notice + build**.
 
@@ -135,7 +135,7 @@ All durations in **hours** (number); formatted human-friendly client-side (`3h 1
 
 - **Build:** Vite → `dist/`; `base: '/aws-cli-release-tracker/'` (project Pages path; configurable). Imports `data/data.json` via a Vite path alias (`@data`) — build-time, type-safe, no runtime fetch/base-path issues.
 - **Layout (top → bottom):**
-  1. **Hero card — Issue #727 status + live days-open counter.** Biggest element on the page; the days number counts up live from `created_at` (client-side `setInterval`), status pulled from `issue727` in the JSON. This is the punchline the whole site builds to.
+  1. **Hero card — Issue #727 status + live days-open counter.** Biggest element on the page; the days number counts up live from `created_at` (client-side `setInterval`). Status comes from a live `fetch` of the issue at page load, falling back to `issue727` in the JSON on failure. This is the punchline the whole site builds to.
   2. **Headline stat cards** — ① Total bottle lag big, with the 30d/90d/1y/all-time breakdown; ② Notice latency; ③ Bottle build latency. Median/p90 in tooltips.
   3. **Main graph** — Recharts scatter of **total bottle lag over time** (x = release date, y = lag, colored v1/v2) with a rolling-average line. Y-axis in hours, likely log-scaled to span minutes→days.
   4. **Recent releases table** — version · aws date · notice lag · build lag · total lag.
@@ -187,3 +187,4 @@ Top-level `package.json` provides `npm run refresh` (ingest → export) orchestr
 - **Binary `.sqlite` in git** — accepted (small; enables "pull down and query"). The committed `data.json` provides the readable diff.
 - **Homebrew message-format drift** — parser is regex-based; a format change would silently drop rows. Mitigate with a post-parse assertion that recent tags have matching Homebrew rows where expected, and log gaps.
 - **GitHub Pages base path** — `base` must match the repo/site path; documented and configurable for a future custom domain.
+- **Live #727 fetch** — unauthenticated (can't ship a token in a static page); GitHub's unauth limit is 60 req/hr/IP. On 403/network error the page silently falls back to the committed `issue727` baseline, so the hero always renders. `created_at` is static, so the days counter never depends on the call.
