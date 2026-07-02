@@ -802,7 +802,7 @@ Claude-Session: https://claude.ai/code/session_01YbcAbdkFNTQ76nEZ6RxqXm"
 - `2016-03-01` — milestone — Homebrew splits into `brew` + `homebrew-core`.
 - `2019-01-23` — milestone — `legacy-homebrew` archived.
 - `2020-xx-xx` — milestone — BrewTestBot automation era begins *(verify exact date; use the earliest automated awscli bump you can confirm)*.
-- Plus ≥ 6 world-event lines spread across 2014–2026 for comedic contrast (author these; keep them light and broadly verifiable).
+- Plus ≥ 6 world-event lines spread across 2014–2026 for comedic contrast. **Draw ONLY from these categories:** pop-culture moments (film / music / sports / viral phenomena), notable births or deaths, and Nobel Prize awards. **Strictly avoid anything political or controversial** — no elections, politicians, legislation, wars, disasters, or divisive topics. Author these; keep each light and broadly verifiable. For deaths, keep the tone respectful — the joke lands entirely on #727 still being open, never at the person's expense (e.g. "…the world paused; #727 did not"). Every line reinforces the running gag that #727 remains open.
 
 - [ ] **Step 1: Write the failing test** — `site/test/news.test.ts`
 
@@ -843,17 +843,22 @@ Then author the file (world-event copy is illustrative — refine for taste; eve
 ```ts
 export interface NewsItem { date: string; text: string; kind: 'milestone' | 'world' }
 
+// World-event lines: pop culture / notable births-deaths / Nobel only — nothing political or controversial.
+// Dates verified broadly; refine copy for taste. Every line lands the "#727 is still open" gag.
 export const NEWS: NewsItem[] = [
   { date: '2014-03-29', kind: 'milestone', text: 'aws-cli #727 filed: "Install aws-cli using Homebrew." A simple ask.' },
-  { date: '2015-07-14', kind: 'world', text: 'New Horizons reaches Pluto — 3 billion miles. #727: still open.' },
+  { date: '2014-08-01', kind: 'world', text: 'The Ice Bucket Challenge floods every feed. #727, freshly filed, waits.' },
+  { date: '2015-12-18', kind: 'world', text: "'Star Wars: The Force Awakens' reawakens the saga. #727 stays dormant." },
   { date: '2016-03-01', kind: 'milestone', text: 'Homebrew splits into brew + homebrew-core. #727 watches from the sidelines.' },
-  { date: '2017-08-21', kind: 'world', text: 'A total solar eclipse crosses the USA. The moon moved. #727 did not.' },
+  { date: '2016-10-13', kind: 'world', text: 'Bob Dylan wins the Nobel Prize in Literature. A songwriter becomes a laureate; #727 stays a ticket.' },
+  { date: '2017-07-19', kind: 'world', text: "'Despacito' becomes the most-streamed song ever — billions of plays, and #727 still at zero merges." },
   { date: '2019-01-23', kind: 'milestone', text: 'legacy-homebrew archived. An entire repo retired before #727.' },
-  { date: '2019-04-10', kind: 'world', text: 'Humanity photographs a black hole. #727 remains a event horizon of its own.' },
+  { date: '2019-04-26', kind: 'world', text: "'Avengers: Endgame' opens and becomes the highest-grossing film ever. A 22-film saga wraps; #727 does not." },
+  { date: '2020-03-20', kind: 'world', text: "Everyone escapes to an 'Animal Crossing' island. #727 stayed put on the mainland." },
   { date: '2020-04-26', kind: 'milestone', text: 'BrewTestBot automation era begins — bumps land in hours. #727: technically still open.' },
-  { date: '2021-02-18', kind: 'world', text: 'Perseverance lands on Mars. Another planet reached; #727 unreached.' },
-  { date: '2022-11-30', kind: 'world', text: 'ChatGPT launches; the world learns to code differently. #727 endures.' },
-  { date: '2024-04-08', kind: 'world', text: 'Another North American total eclipse. Two eclipses out-shipped #727.' },
+  { date: '2022-06-17', kind: 'world', text: "A 1985 Kate Bush song tops the charts again via 'Stranger Things.' A 37-year-old track had its comeback before #727 got its merge." },
+  { date: '2023-07-21', kind: 'world', text: "'Barbenheimer' turns one July weekend into a global phenomenon. #727 watches, as ever." },
+  { date: '2024-10-08', kind: 'world', text: 'Hopfield & Hinton win the Nobel Prize in Physics for neural networks. Machines learned to think; #727 stayed open.' },
   { date: '2026-07-15', kind: 'milestone', text: 'awscli@1 enters maintenance mode. Even v1 is winding down — #727 is not.' },
 ];
 ```
