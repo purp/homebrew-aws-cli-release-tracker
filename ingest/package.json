@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "refresh": "tsx src/cli.ts",
-    "test": "vitest run"
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "octokit": "^4.1.0"

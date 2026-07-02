@@ -94,7 +94,7 @@ export interface TrackingRow {
 }
 
 export function queryTracking(db: AppDb): TrackingRow[] {
-  return db.prepare(`SELECT formula, version, major, releasedAt, formulaAt, bottleAt FROM tracking`).all() as TrackingRow[];
+  return db.prepare(`SELECT formula, version, major, releasedAt, formulaAt, bottleAt FROM tracking`).all() as unknown as TrackingRow[];
 }
 
 export function countReleases(db: AppDb): { major: number; n: number }[] {
