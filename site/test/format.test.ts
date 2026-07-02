@@ -6,6 +6,8 @@ describe('formatDuration', () => {
   it('hours and minutes', () => expect(formatDuration(3.2)).toBe('3h 12m'));
   it('whole hours drop minutes', () => expect(formatDuration(3)).toBe('3h'));
   it('days past 48h', () => expect(formatDuration(50.4)).toBe('2.1 d'));
+  it('rolls minutes up into the next hour instead of emitting 60m', () => expect(formatDuration(1.999)).toBe('2h'));
+  it('rolls a sub-hour value up to 1h instead of 60m', () => expect(formatDuration(0.9917)).toBe('1h'));
 });
 
 describe('formatDate', () => {
