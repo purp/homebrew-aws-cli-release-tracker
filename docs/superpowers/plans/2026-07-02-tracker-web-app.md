@@ -8,21 +8,21 @@
 
 **Tech Stack:** Vite 6, React 18, TypeScript, Recharts, Vitest + @testing-library/react + jsdom. GitHub Pages via Actions.
 
-**Prerequisite:** Plan A is complete — `data/data.json` exists and matches the `DataJson` contract (mirrored verbatim in Task B1 below).
+**Prerequisite:** Plan A is complete — `data/data.json` exists and matches the `DataJson` contract (mirrored verbatim in Task 1 below).
 
 ## Global Constraints
 
 - **Node:** ≥ 20; ESM; npm **workspace** `site` under the existing root `package.json`.
 - **Pages base path:** `/aws-cli-release-tracker/` (Vite `base`). Configurable for a future custom domain.
 - **`@data` alias** → repo-root `data/data.json`. Components never import it directly — only `src/data.ts` does; components receive data via props.
-- **Data contract:** the `DataJson`/`SeriesPoint`/`Summary`/`CoverageEntry` shapes in Task B1 must match `ingest/src/export.ts` **exactly**. Durations are **hours** (number).
+- **Data contract:** the `DataJson`/`SeriesPoint`/`Summary`/`CoverageEntry` shapes in Task 1 must match `ingest/src/export.ts` **exactly**. Durations are **hours** (number).
 - **Live #727 fetch:** `GET https://api.github.com/repos/aws/aws-cli/issues/727`, unauthenticated, at page load; on any failure fall back to `data.issue727`. The **days counter** is computed client-side from `issue727.createdAt` and never depends on the fetch.
-- **Copy anchors (verbatim):** #727 filed **2014-03-29**, still open; `awscli@1` maintenance mode **2026-07-15**; Homebrew split **2016-03-01** (`brew` + `homebrew-core`); `legacy-homebrew` archived **2019-01-23**; BrewTestBot automation era **~2020-04** *(verify exact date during Task B7)*.
+- **Copy anchors (verbatim):** #727 filed **2014-03-29**, still open; `awscli@1` maintenance mode **2026-07-15**; Homebrew split **2016-03-01** (`brew` + `homebrew-core`); `legacy-homebrew` archived **2019-01-23**; BrewTestBot automation era **~2020-04** *(verify exact date during Task 7)*.
 - **Commits are GPG-signed**; end messages with the repo's `Co-Authored-By` / `Claude-Session` trailers.
 
 ---
 
-### Task B1: Site scaffold + data contract + build-time data wiring
+### Task 1: Site scaffold + data contract + build-time data wiring
 
 **Files:**
 - Create: `site/package.json`, `site/tsconfig.json`, `site/vite.config.ts`, `site/vitest.config.ts`
@@ -203,7 +203,7 @@ createRoot(document.getElementById('root')!).render(
 );
 ```
 
-- [ ] **Step 11: Create `site/src/App.tsx` (placeholder — fleshed out in Task B8)**
+- [ ] **Step 11: Create `site/src/App.tsx` (placeholder — fleshed out in Task 8)**
 
 ```tsx
 import { data } from './data.js';
@@ -253,7 +253,7 @@ Claude-Session: https://claude.ai/code/session_01YbcAbdkFNTQ76nEZ6RxqXm"
 
 ---
 
-### Task B2: Formatting helpers
+### Task 2: Formatting helpers
 
 **Files:**
 - Create: `site/src/format.ts`
@@ -336,7 +336,7 @@ Claude-Session: https://claude.ai/code/session_01YbcAbdkFNTQ76nEZ6RxqXm"
 
 ---
 
-### Task B3: Issue #727 hero (live fetch + live day counter)
+### Task 3: Issue #727 hero (live fetch + live day counter)
 
 **Files:**
 - Create: `site/src/useIssue727.ts`
@@ -491,7 +491,7 @@ Claude-Session: https://claude.ai/code/session_01YbcAbdkFNTQ76nEZ6RxqXm"
 
 ---
 
-### Task B4: Headline stat cards
+### Task 4: Headline stat cards
 
 **Files:**
 - Create: `site/src/components/HeadlineStats.tsx`
@@ -590,7 +590,7 @@ Claude-Session: https://claude.ai/code/session_01YbcAbdkFNTQ76nEZ6RxqXm"
 
 ---
 
-### Task B5: Main lag graph
+### Task 5: Main lag graph
 
 **Files:**
 - Create: `site/src/components/LagChart.tsx`
@@ -694,7 +694,7 @@ Claude-Session: https://claude.ai/code/session_01YbcAbdkFNTQ76nEZ6RxqXm"
 
 ---
 
-### Task B6: Recent-releases table
+### Task 6: Recent-releases table
 
 **Files:**
 - Create: `site/src/components/RecentTable.tsx`
@@ -784,7 +784,7 @@ Claude-Session: https://claude.ai/code/session_01YbcAbdkFNTQ76nEZ6RxqXm"
 
 ---
 
-### Task B7: News scroller + curated content
+### Task 7: News scroller + curated content
 
 **Files:**
 - Create: `site/src/news.ts`
@@ -894,7 +894,7 @@ Claude-Session: https://claude.ai/code/session_01YbcAbdkFNTQ76nEZ6RxqXm"
 
 ---
 
-### Task B8: App assembly + styling
+### Task 8: App assembly + styling
 
 **Files:**
 - Modify: `site/src/App.tsx`
@@ -1027,7 +1027,7 @@ Claude-Session: https://claude.ai/code/session_01YbcAbdkFNTQ76nEZ6RxqXm"
 
 ---
 
-### Task B9: GitHub Actions Pages deploy workflow
+### Task 9: GitHub Actions Pages deploy workflow
 
 **Files:**
 - Create: `.github/workflows/deploy.yml`
@@ -1076,7 +1076,7 @@ jobs:
 - [ ] **Step 2: Lint the workflow YAML locally**
 
 Run: `node -e "const y=require('fs').readFileSync('.github/workflows/deploy.yml','utf8'); if(!y.includes('deploy-pages')) throw new Error('bad'); console.log('ok')"`
-Expected: `ok`. (Full validation happens once pushed — see Task B10.)
+Expected: `ok`. (Full validation happens once pushed — see Task 10.)
 
 - [ ] **Step 3: Commit**
 
@@ -1090,7 +1090,7 @@ Claude-Session: https://claude.ai/code/session_01YbcAbdkFNTQ76nEZ6RxqXm"
 
 ---
 
-### Task B10: README + create remote + enable Pages + first deploy
+### Task 10: README + create remote + enable Pages + first deploy
 
 **Files:**
 - Create: `README.md`
@@ -1171,17 +1171,17 @@ Expected: workflow succeeds; site live at `https://{owner}.github.io/aws-cli-rel
 ## Self-Review
 
 **Spec coverage:**
-- Hero #727 live days-open counter + live status fetch with fallback → Task B3. ✅
-- Three headline stats (total/notice/build) with windows + median/p90 tooltips → Task B4. ✅
-- Main lag-over-time graph, v1/v2, rolling avg → Task B5. ✅
-- Recent-releases table → Task B6. ✅
-- News scroller (anchors: #727 2014, both Homebrew fork events, BrewTestBot, world events) → Task B7. ✅
-- `awscli@1` maintenance-mode note → Task B8. ✅
-- Static Vite build, `@data` import, base path → Tasks B1, B8. ✅
-- GitHub Pages deploy on push → Task B9. ✅
-- README + weekly Cowork refresh docs + remote/Pages setup → Task B10. ✅
-- Data contract mirrors `export.ts` → Task B1 (enforced by `data.test.ts`). ✅
+- Hero #727 live days-open counter + live status fetch with fallback → Task 3. ✅
+- Three headline stats (total/notice/build) with windows + median/p90 tooltips → Task 4. ✅
+- Main lag-over-time graph, v1/v2, rolling avg → Task 5. ✅
+- Recent-releases table → Task 6. ✅
+- News scroller (anchors: #727 2014, both Homebrew fork events, BrewTestBot, world events) → Task 7. ✅
+- `awscli@1` maintenance-mode note → Task 8. ✅
+- Static Vite build, `@data` import, base path → Tasks 1, 8. ✅
+- GitHub Pages deploy on push → Task 9. ✅
+- README + weekly Cowork refresh docs + remote/Pages setup → Task 10. ✅
+- Data contract mirrors `export.ts` → Task 1 (enforced by `data.test.ts`). ✅
 
-**Placeholder scan:** none — every step has real code/commands. Task B7 world-event copy is explicitly illustrative-and-refine, with the test enforcing the factual milestone anchors.
+**Placeholder scan:** none — every step has real code/commands. Task 7 world-event copy is explicitly illustrative-and-refine, with the test enforcing the factual milestone anchors.
 
-**Type consistency:** `DataJson`, `SeriesPoint`, `Summary`, `CoverageEntry`, `Issue727`, `NewsItem` and component props (`headline`, `series`, `recent`, `issue727`, `items`) are consistent across tasks and match the App wiring in B8.
+**Type consistency:** `DataJson`, `SeriesPoint`, `Summary`, `CoverageEntry`, `Issue727`, `NewsItem` and component props (`headline`, `series`, `recent`, `issue727`, `items`) are consistent across tasks and match the App wiring in Task 8.
