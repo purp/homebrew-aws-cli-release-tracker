@@ -8,7 +8,7 @@ describe('NEWS content', () => {
   });
   it('includes the required milestone anchors', () => {
     const milestones = NEWS.filter((n) => n.kind === 'milestone').map((n) => n.date);
-    expect(milestones).toEqual(expect.arrayContaining(['2014-03-29', '2016-03-01', '2019-01-23']));
+    expect(milestones).toEqual(expect.arrayContaining(['2014-03-29', '2016-03-01', '2019-01-23', '2026-07-15']));
     expect(milestones.some((d) => d.startsWith('2020'))).toBe(true);
   });
   it('has at least six world-event lines', () => {
