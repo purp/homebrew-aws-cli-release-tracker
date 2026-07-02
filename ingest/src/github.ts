@@ -20,6 +20,10 @@ export function formulaPath(formula: Formula): string {
   return `Formula/a/${formula}.rb`;
 }
 
+export function formulaPaths(formula: Formula): string[] {
+  return [formulaPath(formula), `Formula/${formula}.rb`];
+}
+
 const TAGS_QUERY = `
   query($cursor: String) {
     repository(owner: "aws", name: "aws-cli") {
@@ -73,18 +77,22 @@ export function makeGithubClient(deps: { graphql: GraphqlFn; commitsPage: Commit
 
     async fetchFormulaCommits(formula, opts): Promise<HbCommit[]> {
       const since = Date.parse(opts.sinceIso);
-      const path = formulaPath(formula);
       const out: HbCommit[] = [];
-      for (let page = 1; ; page++) {
-        const commits = await deps.commitsPage(path, page);
-        if (commits.length === 0) break;
-        let stop = false;
-        for (const c of commits) {
-          if (opts.stopAtSha && c.sha === opts.stopAtSha) { stop = true; break; }
-          if (Date.parse(c.date) < since) { stop = true; break; }
-          out.push(c);
+      const paths = formulaPaths(formula);
+      for (let i = 0; i < paths.length; i++) {
+        const path = paths[i];
+        const stopAtSha = i === 0 ? opts.stopAtSha : undefined;
+        for (let page = 1; ; page++) {
+          const commits = await deps.commitsPage(path, page);
+          if (commits.length === 0) break;
+          let stop = false;
+          for (const c of commits) {
+            if (stopAtSha && c.sha === stopAtSha) { stop = true; break; }
+            if (Date.parse(c.date) < since) { stop = true; break; }
+            out.push(c);
+          }
+          if (stop) break;
         }
-        if (stop) break;
       }
       return out;
     },

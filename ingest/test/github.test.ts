@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { makeGithubClient, formulaPath, type HbCommit } from '../src/github.js';
+import { makeGithubClient, formulaPath, formulaPaths, type HbCommit } from '../src/github.js';
 
 const TAGS_PAGE_1 = {
   repository: { refs: {
@@ -48,7 +48,7 @@ describe('fetchFormulaCommits', () => {
   it('stops at the cursor sha', async () => {
     const gh = makeGithubClient({
       graphql: async () => ({}),
-      commitsPage: async (_p, page) => (page === 1 ? page1 : []),
+      commitsPage: async (path, page) => (path === 'Formula/a/awscli.rb' && page === 1 ? page1 : []),
       issue727: async () => ({ state: 'open', createdAt: 'x', closedAt: null, url: 'u' }),
     });
     const out = await gh.fetchFormulaCommits('awscli', { sinceIso: '2020-01-01T00:00:00Z', stopAtSha: 'f1' });
@@ -57,11 +57,28 @@ describe('fetchFormulaCommits', () => {
   it('stops at the window boundary', async () => {
     const gh = makeGithubClient({
       graphql: async () => ({}),
-      commitsPage: async (_p, page) => (page === 1 ? page1 : page === 2 ? page2 : []),
+      commitsPage: async (path, page) =>
+        path === 'Formula/a/awscli.rb' ? (page === 1 ? page1 : page === 2 ? page2 : []) : [],
       issue727: async () => ({ state: 'open', createdAt: 'x', closedAt: null, url: 'u' }),
     });
     const out = await gh.fetchFormulaCommits('awscli', { sinceIso: '2020-01-01T00:00:00Z' });
     expect(out.map((c) => c.sha)).toEqual(['b1', 'f1']); // 'old' is pre-window, dropped
+  });
+  it('reads the legacy pre-shard path too and merges newest-first', async () => {
+    const current: HbCommit[] = [{ sha: 'c1', date: '2024-01-01T00:00:00Z', message: 'awscli 2.20.0' }];
+    const legacy: HbCommit[] = [{ sha: 'l1', date: '2021-05-01T00:00:00Z', message: 'awscli 2.2.0' }];
+    const gh = makeGithubClient({
+      graphql: async () => ({}),
+      commitsPage: async (path, page) => {
+        if (page !== 1) return [];
+        if (path === 'Formula/a/awscli.rb') return current;
+        if (path === 'Formula/awscli.rb') return legacy;
+        return [];
+      },
+      issue727: async () => ({ state: 'open', createdAt: 'x', closedAt: null, url: 'u' }),
+    });
+    const out = await gh.fetchFormulaCommits('awscli', { sinceIso: '2020-01-01T00:00:00Z' });
+    expect(out.map((c) => c.sha)).toEqual(['c1', 'l1']);
   });
 });
 
@@ -69,5 +86,12 @@ describe('formulaPath', () => {
   it('maps formula to file path', () => {
     expect(formulaPath('awscli')).toBe('Formula/a/awscli.rb');
     expect(formulaPath('awscli@1')).toBe('Formula/a/awscli@1.rb');
+  });
+});
+
+describe('formulaPaths', () => {
+  it('returns current sharded path then legacy pre-shard path', () => {
+    expect(formulaPaths('awscli')).toEqual(['Formula/a/awscli.rb', 'Formula/awscli.rb']);
+    expect(formulaPaths('awscli@1')).toEqual(['Formula/a/awscli@1.rb', 'Formula/awscli@1.rb']);
   });
 });
