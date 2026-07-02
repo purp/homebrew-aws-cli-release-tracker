@@ -1054,7 +1054,7 @@ permissions:
   id-token: write
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false  # don't cancel a mid-flight Pages deploy (GitHub's canonical setting)
 jobs:
   build:
     runs-on: ubuntu-latest
