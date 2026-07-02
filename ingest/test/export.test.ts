@@ -18,10 +18,14 @@ function db2() {
 describe('buildDataJson', () => {
   const data = buildDataJson(db2(), { generatedAt: '2026-07-02T00:00:00Z', windowStart: '2020-01-01T00:00:00Z', issue727: ISSUE });
 
-  it('computes the three headline metrics (all-time window)', () => {
+  it('computes the three headline metrics across all windows', () => {
     expect(data.headline.totalBottleLag.all).toMatchObject({ mean: 3, n: 1 });
     expect(data.headline.noticeLatency.all).toMatchObject({ mean: 2, n: 1 });
     expect(data.headline.bottleBuildLatency.all).toMatchObject({ mean: 1, n: 1 });
+    // all three metrics now carry the same window set (d30/d90/y1/all)
+    expect(data.headline.totalBottleLag.d30).toMatchObject({ mean: 3, n: 1 });
+    expect(data.headline.noticeLatency.d30).toMatchObject({ mean: 2, n: 1 });
+    expect(data.headline.bottleBuildLatency.d30).toMatchObject({ mean: 1, n: 1 });
   });
 
   it('computes coverage per version', () => {

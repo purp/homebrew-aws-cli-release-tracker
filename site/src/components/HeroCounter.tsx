@@ -17,11 +17,11 @@ export function HeroCounter({ issue727 }: { issue727: Issue727 }) {
   return (
     <section className="hero">
       <p className="hero__kicker">
-        aws-cli issue <a href={live.url}>#727</a> — "Install aws-cli using Homebrew"
+        aws-cli issue <a href={live.url}>#727</a> ("Install aws-cli using Homebrew") {open ? 'is' : 'was'}…
       </p>
-      <p className="hero__count"><span className="hero__num">{days.toLocaleString()}</span> days</p>
+      <p className="hero__count"><span className="hero__num">{days.toLocaleString()}</span> days old</p>
       <p className="hero__status">
-        {open ? 'Still open 😩 — and counting' : `CLOSED 🎉 — after ${days.toLocaleString()} days`}
+        {open ? '… and counting 😩' : `when it finally was closed 🎉`}
       </p>
     </section>
   );

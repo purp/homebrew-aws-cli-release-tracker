@@ -6,14 +6,15 @@ export interface SeriesPoint {
 }
 export interface CoverageEntry { awscli: number; shipped: number; pct: number }
 export interface Issue727 { state: 'open' | 'closed'; createdAt: string; closedAt: string | null; url: string }
+export interface WindowSet { d30: Summary; d90: Summary; y1: Summary; all: Summary }
 export interface DataJson {
   generatedAt: string;
   windowStart: string;
   issue727: Issue727;
   headline: {
-    totalBottleLag: { d30: Summary; d90: Summary; y1: Summary; all: Summary };
-    noticeLatency: { y1: Summary; all: Summary };
-    bottleBuildLatency: { y1: Summary; all: Summary };
+    totalBottleLag: WindowSet;
+    noticeLatency: WindowSet;
+    bottleBuildLatency: WindowSet;
   };
   coverage: { overall: CoverageEntry; v1: CoverageEntry; v2: CoverageEntry };
   series: SeriesPoint[];

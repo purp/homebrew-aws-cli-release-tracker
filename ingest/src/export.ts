@@ -11,14 +11,15 @@ export interface SeriesPoint {
   totalH: number | null; noticeH: number | null; buildH: number | null;
 }
 export interface CoverageEntry { awscli: number; shipped: number; pct: number }
+export interface WindowSet { d30: Summary; d90: Summary; y1: Summary; all: Summary }
 export interface DataJson {
   generatedAt: string;
   windowStart: string;
   issue727: Issue727Data;
   headline: {
-    totalBottleLag: { d30: Summary; d90: Summary; y1: Summary; all: Summary };
-    noticeLatency: { y1: Summary; all: Summary };
-    bottleBuildLatency: { y1: Summary; all: Summary };
+    totalBottleLag: WindowSet;
+    noticeLatency: WindowSet;
+    bottleBuildLatency: WindowSet;
   };
   coverage: { overall: CoverageEntry; v1: CoverageEntry; v2: CoverageEntry };
   series: SeriesPoint[];
@@ -57,6 +58,9 @@ export function buildDataJson(
   const total = (d: number | null) => summarizeMetric(series, now, (p) => p.totalH, d);
   const notice = (d: number | null) => summarizeMetric(series, now, (p) => p.noticeH, d);
   const build = (d: number | null) => summarizeMetric(series, now, (p) => p.buildH, d);
+  const win = (fn: (d: number | null) => Summary): WindowSet => ({
+    d30: fn(WINDOWS.d30), d90: fn(WINDOWS.d90), y1: fn(WINDOWS.y1), all: fn(WINDOWS.all),
+  });
 
   const relByMajor = new Map(countReleases(db).map((r) => [r.major, r.n]));
   const shippedByMajor = (m: number) => series.filter((p) => p.major === m).length;
@@ -78,9 +82,9 @@ export function buildDataJson(
     windowStart: opts.windowStart,
     issue727: opts.issue727,
     headline: {
-      totalBottleLag: { d30: total(WINDOWS.d30), d90: total(WINDOWS.d90), y1: total(WINDOWS.y1), all: total(WINDOWS.all) },
-      noticeLatency: { y1: notice(WINDOWS.y1), all: notice(WINDOWS.all) },
-      bottleBuildLatency: { y1: build(WINDOWS.y1), all: build(WINDOWS.all) },
+      totalBottleLag: win(total),
+      noticeLatency: win(notice),
+      bottleBuildLatency: win(build),
     },
     coverage: { overall: merge(v1, v2), v1, v2 },
     series,

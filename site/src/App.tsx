@@ -11,17 +11,17 @@ export function App() {
   return (
     <div className="page">
       <header className="page__head">
-        <h1>Is Homebrew keeping up with aws-cli?</h1>
-        <p className="page__sub">Tracking how fast Homebrew ships each aws-cli release. Data since 2020, refreshed weekly · generated {formatDate(data.generatedAt)}.</p>
+        <h1>Is Homebrew's <code>awscli</code> keeping up with <code>aws-cli</code>?</h1>
+        <p className="page__sub">Tracking how well the <code>awscli</code> package has kept up with each <code>aws-cli</code> release since 2020 · last updated {formatDate(data.generatedAt)} · updated weekly</p>
       </header>
       <HeroCounter issue727={data.issue727} />
       <HeadlineStats headline={data.headline} />
       <LagChart series={data.series} />
-      <RecentTable recent={data.recent} />
-      <p className="note">Note: <code>awscli@1</code> enters maintenance mode {data.notes.awscli1MaintenanceMode}.</p>
+      <RecentTable recent={data.recent.slice(0, 5)} />
       <NewsScroller items={NEWS} />
       <footer className="page__foot">
-        Source: aws-cli git tags + Homebrew formula/bottle commits, via the GitHub API. Coverage: {data.coverage.overall.shipped}/{data.coverage.overall.awscli} releases shipped ({data.coverage.overall.pct.toFixed(0)}%).
+        Source: aws-cli git tags + Homebrew formula/bottle commits, via the GitHub API.
+        Made with ❤️ and 😁 (and a tiny bit of 😢)
       </footer>
     </div>
   );
