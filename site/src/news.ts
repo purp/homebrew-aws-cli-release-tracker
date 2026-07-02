@@ -13,7 +13,7 @@ export const NEWS: NewsItem[] = [
   { date: '2017-08-04', kind: 'world', text: "'Despacito' becomes the most-viewed video in YouTube history. Billions of views later, #727 still has zero merges." },
   { date: '2019-01-23', kind: 'milestone', text: 'legacy-homebrew is archived. An entire repository retires before #727 does.' },
   { date: '2019-04-26', kind: 'world', text: "'Avengers: Endgame' closes out a 22-film saga in a single weekend. #727's story arc is still going." },
-  { date: '2020-01-26', kind: 'world', text: "Kobe Bryant's sudden death stuns the sports world into silence. #727 makes no sound either — it just stays open." },
+  { date: '2020-01-26', kind: 'world', text: 'The sports world pauses to mourn Kobe Bryant. #727 does not pause — it just remains open.' },
   { date: '2020-03-20', kind: 'world', text: "'Animal Crossing: New Horizons' lets millions build an island paradise from scratch. #727 stays stuck on the mainland." },
   { date: '2020-04-26', kind: 'milestone', text: "BrewTestBot's first automated bottle-bump commits land in homebrew-core, kicking off the automation era. #727 stays firmly manual." },
   { date: '2022-06-17', kind: 'world', text: "A 37-year-old Kate Bush track, revived by 'Stranger Things,' hits #1 in the UK. #727 needed no soundtrack to stay exactly where it was." },
