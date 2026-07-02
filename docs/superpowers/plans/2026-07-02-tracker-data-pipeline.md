@@ -14,6 +14,7 @@
 - **Window start:** `2020-01-01T00:00:00Z` — ignore any aws-cli release older than this. Constant name `WINDOW_START`.
 - **Formula ↔ major mapping:** `awscli` ⇔ major **2**; `awscli@1` ⇔ major **1**.
 - **GitHub targets:** aws-cli repo `aws/aws-cli`; Homebrew repo `Homebrew/homebrew-core`; formula paths `Formula/a/awscli.rb` and `Formula/a/awscli@1.rb`; issue `aws/aws-cli#727`.
+- **Formula path sharding (implemented in Task 4 `github.ts`):** Homebrew moved formulae into `Formula/<letter>/` subdirs on 2023-08-09, and GitHub's `commits?path=` API does NOT follow renames. So `fetchFormulaCommits` reads BOTH the current path (`Formula/a/<f>.rb`) and the legacy pre-shard path (`Formula/<f>.rb`) via `formulaPaths(formula)`, merging newest-first; the legacy path holds 2020-02→2023-08 history (back to `awscli 2.0.0` / `awscli@1 1.17.10`, 2020-02-13). The incremental `stopAtSha` cursor applies only to the current path.
 - **Commit-message patterns** (match by message, not author):
   - Formula merge: `/^awscli(@1)? (\d[\w.]*)$/` → group2 = version.
   - Bottle build: `/^awscli(@1)?: update (\d[\w.]*) bottle\.$/` → group2 = version.
