@@ -17,8 +17,8 @@ export function App() {
       <HeroCounter issue727={data.issue727} />
       <HeadlineStats headline={data.headline} />
       <LagChart series={data.series} />
-      <RecentTable recent={data.recent.slice(0, 5)} />
       <NewsScroller items={NEWS} />
+      <RecentTable recent={data.recent.slice(0, 5)} />
       <footer className="page__foot">
         Source: aws-cli git tags + Homebrew formula/bottle commits, via the GitHub API.
         Made with ❤️ and 😁 (and a tiny bit of 😢)

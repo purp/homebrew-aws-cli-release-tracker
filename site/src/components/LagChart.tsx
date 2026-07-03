@@ -48,6 +48,21 @@ export function LagChart({ series }: { series: SeriesPoint[] }) {
     return allRows.filter((r) => r.t >= cutoff);
   }, [allRows, days]);
 
+  // Every windowed view (30/60/90d, 1y) shares one Y domain — the last year's
+  // range — so switching windows never rescales the axis and pins the near-flat
+  // v1 line to the top edge. "All" derives its own (wider) domain from all-time
+  // data, which includes much larger historical spikes.
+  const yDomain = useMemo<[number, number]>(() => {
+    if (allRows.length === 0) return [1, 48];
+    const cutoff = days === null ? -Infinity : allRows[allRows.length - 1].t - 365 * DAY_MS;
+    const vals = allRows
+      .filter((r) => r.t >= cutoff)
+      .flatMap((r) => [r.v1, r.v2])
+      .filter((v): v is number => typeof v === 'number' && v > 0);
+    if (!vals.length) return [1, 48];
+    return [Math.min(...vals) / 1.2, Math.max(...vals) * 1.2];
+  }, [allRows, days]);
+
   return (
     <section className="chart">
       <div className="chart__head">
@@ -71,7 +86,7 @@ export function LagChart({ series }: { series: SeriesPoint[] }) {
           <CartesianGrid strokeDasharray="3 3" opacity={0.15} />
           <XAxis type="number" dataKey="t" domain={['dataMin', 'dataMax']} scale="time"
                  tickFormatter={(t) => formatDate(new Date(t).toISOString())} minTickGap={48} />
-          <YAxis scale="log" domain={['auto', 'auto']} allowDataOverflow
+          <YAxis scale="log" domain={yDomain} allowDataOverflow
                  tickFormatter={(h) => formatDuration(h)} width={60} />
           <Tooltip
             formatter={(value: number, name) => [formatDuration(value), name]}
