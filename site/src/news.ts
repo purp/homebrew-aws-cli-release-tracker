@@ -5,7 +5,7 @@ export interface NewsItem { date: string; text: string; kind: 'milestone' | 'wor
 // Dates verified via GitHub's API (milestones) and well-documented public
 // record (world events). Every line lands the same gag: #727 is still open.
 export const NEWS: NewsItem[] = [
-  { date: '2014-03-29', kind: 'milestone', text: 'aws-cli #727 filed: "Install aws-cli using Homebrew." A simple, polite request for a seven-line README change.' },
+  { date: '2014-03-29', kind: 'milestone', text: 'aws-cli #727 filed: "Install aws-cli using Homebrew." A polite request for a seven-line README change.' },
   { date: '2014-08-01', kind: 'world', text: 'The ALS Ice Bucket Challenge soaks every timeline in America.' },
   { date: '2015-02-26', kind: 'world', text: "The world can't agree whether 'The Dress' is blue-and-black or white-and-gold — a standoff #727 knows well." },
   { date: '2015-12-18', kind: 'world', text: "'Star Wars: The Force Awakens' reopens a saga many thought finished. #727? Nowhere close to finished." },
