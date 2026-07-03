@@ -33,7 +33,9 @@ new secrets.
 
 ## Design
 
-Add one workflow: `.github/workflows/refresh.yml`. No change to `deploy.yml`.
+Add one workflow, `.github/workflows/refresh.yml`, plus a one-input change to
+`deploy.yml` so the dispatched deploy can be pinned to an exact commit (see
+"Pinning the deploy to the pushed commit" below).
 
 **Triggers**
 - `schedule: - cron: '0 17 * * 0'` — Sundays 17:00 UTC (10:00 PT).
@@ -56,20 +58,36 @@ the working tree / git push.
    and only if `git diff --cached` is non-empty, commit
    `chore(data): weekly refresh` and push. The guard prevents an empty-commit
    error.
-6. **Deploy:** `gh workflow run deploy.yml`, with `GH_TOKEN: ${{ github.token }}`.
+6. **Deploy:** `gh workflow run deploy.yml --ref main -f ref=<pushed-sha>`, with
+   `GH_TOKEN: ${{ github.token }}`, passing the SHA captured in step 5.
 
 ## Why dispatch the deploy instead of relying on the push
 
 A push made with the built-in `GITHUB_TOKEN` deliberately does **not** trigger
 other workflows' `push` events (GitHub's anti-recursion rule), so the data
 commit would not fire `deploy.yml` on its own. `workflow_dispatch` is exempt
-from that rule, so step 6 dispatches the existing deploy explicitly against the
-just-pushed commit on `main`.
+from that rule, so step 6 dispatches the existing deploy explicitly.
 
 A developer's *own* local data push still auto-deploys as before — it uses their
 credentials, not the Actions token — so this indirection only affects the
 automated path, and there is no double-deploy (the automated push is suppressed;
 only the dispatch fires; the Pages `concurrency` group guards overlap anyway).
+
+## Pinning the deploy to the pushed commit
+
+`gh workflow run deploy.yml` starts a run against `main`, but GitHub's Actions
+control plane resolves the branch tip from a replica that can lag the git push
+by a moment — observed during first verification: the refresh pushed the data
+commit, yet the dispatched deploy built the *previous* SHA and republished stale
+data. Left unaddressed the site would perpetually trail one refresh behind.
+
+Fix: `deploy.yml` gains an optional `workflow_dispatch` input `ref`, and its
+checkout uses `ref: ${{ inputs.ref || github.sha }}`. `refresh.yml` captures the
+pushed SHA (`git rev-parse HEAD`) and passes it as that input, so the build is
+pinned to the exact commit regardless of tip-resolution lag. Push events and
+manual dispatches with no input fall back to `github.sha` — unchanged behaviour.
+This keeps `deploy.yml` the single source of build/deploy truth (no duplicated
+steps), the only cost being one optional input.
 
 ## Rejected alternatives
 

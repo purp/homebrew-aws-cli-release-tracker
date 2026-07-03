@@ -4,6 +4,11 @@ on:
     branches: [main]
     paths: ['site/**', 'data/**', '.github/workflows/deploy.yml', 'package.json', 'package-lock.json']
   workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Commit SHA or ref to build (defaults to the triggering commit)'
+        required: false
+        default: ''
 permissions:
   contents: read
   pages: write
@@ -16,6 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm }
       - run: npm ci

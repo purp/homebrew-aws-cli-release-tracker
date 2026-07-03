@@ -35,10 +35,14 @@ jobs:
           else
             git commit -m 'chore(data): weekly refresh'
             git push
+            echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
             echo 'changed=true' >> "$GITHUB_OUTPUT"
           fi
       - name: Deploy site
         if: steps.commit.outputs.changed == 'true'
-        run: gh workflow run deploy.yml
+        # Pin the deploy to the commit we just pushed. gh resolves main's tip
+        # asynchronously and can catch the pre-push SHA, so pass the exact SHA
+        # as an input rather than letting deploy.yml build main's (lagging) head.
+        run: gh workflow run deploy.yml --ref main -f ref='${{ steps.commit.outputs.sha }}'
         env:
           GH_TOKEN: ${{ github.token }}
