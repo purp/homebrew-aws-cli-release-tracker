@@ -21,7 +21,7 @@ export function HeroCounter({ issue727 }: { issue727: Issue727 }) {
       </p>
       <p className="hero__count">{open ? 'is' : 'was'} <span className="hero__num">{days.toLocaleString()}</span> days old</p>
       <p className="hero__status">
-        {open ? '… and counting 😩' : `when it finally was closed 🎉`}
+        {open ? '… and counting 😩' : 'when it finally was closed 🪷'}
       </p>
     </section>
   );

@@ -19,13 +19,13 @@ body { margin: 0; background: var(--bg); color: var(--ink); }
 /* headline: the total on the left, its two components stacked in a narrow column on the right */
 .stats { margin-bottom: 1rem; }
 .total { background: var(--panel); border-radius: 14px; padding: 1.1rem 2rem; display: flex; gap: 1rem; align-items: stretch; }
-.total__main { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+.total__main { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; padding: 0 clamp(.5rem, 4vw, 2rem); }
 .total__label { color: var(--muted); font-size: .95rem; } .total__label code { color: var(--accent); }
 .total__value { font-size: clamp(2.4rem, 7vw, 3.6rem); font-weight: 800; color: var(--accent); line-height: 1; margin: .12rem 0; }
 .total__sub { color: var(--muted); font-size: .9rem; }
 .total__windows { display: flex; gap: 1.1rem; color: var(--muted); flex-wrap: wrap; font-size: .9rem; margin-top: .55rem; }
 .total__windows b { color: var(--ink); font-weight: 700; }
-.parts { display: flex; flex-direction: column; gap: .5rem; flex: 0 0 40%; max-width: 340px; }
+.parts { display: flex; flex-direction: column; gap: .5rem; flex: 0 0 20%; max-width: 170px; }
 .part { border-radius: 10px; padding: .5rem .8rem; }
 .part--notice { background: rgba(59, 130, 246, .14); border: 1px solid rgba(59, 130, 246, .30); }
 .part--build  { background: rgba(255, 153, 0, .12);  border: 1px solid rgba(255, 153, 0, .30); }

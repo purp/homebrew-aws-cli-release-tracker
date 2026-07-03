@@ -5,16 +5,16 @@ export interface NewsItem { date: string; text: string; kind: 'milestone' | 'wor
 // Dates verified via GitHub's API (milestones) and well-documented public
 // record (world events). Every line lands the same gag: #727 is still open.
 export const NEWS: NewsItem[] = [
-  { date: '2014-03-29', kind: 'milestone', text: 'aws-cli #727 filed: "Install aws-cli using Homebrew." A simple, polite request.' },
-  { date: '2014-08-01', kind: 'world', text: 'The ALS Ice Bucket Challenge soaks every timeline in America. #727, four months old, is still wet behind the ears.' },
+  { date: '2014-03-29', kind: 'milestone', text: 'aws-cli #727 filed: "Install aws-cli using Homebrew." A simple, polite request for a seven-line README change.' },
+  { date: '2014-08-01', kind: 'world', text: 'The ALS Ice Bucket Challenge soaks every timeline in America.' },
   { date: '2015-02-26', kind: 'world', text: "The world can't agree whether 'The Dress' is blue-and-black or white-and-gold — a standoff #727 knows well." },
   { date: '2015-12-18', kind: 'world', text: "'Star Wars: The Force Awakens' reopens a saga many thought finished. #727? Nowhere close to finished." },
-  { date: '2016-03-01', kind: 'milestone', text: 'Homebrew splits into brew and homebrew-core — a whole new home is built.' },
+  { date: '2016-03-01', kind: 'milestone', text: 'Homebrew splits into brew and homebrew-core — a whole new home is brewed.' },
   { date: '2016-10-13', kind: 'world', text: 'Bob Dylan wins the Nobel Prize in Literature, the first songwriter so honored.' },
   { date: '2017-08-04', kind: 'world', text: "'Despacito' becomes the most-viewed video in YouTube history. #727 is feeling jealous." },
   { date: '2018-05-15', kind: 'world', text: "The whole internet argues whether it hears 'Yanny' or 'Laurel.'" },
   { date: '2019-01-23', kind: 'milestone', text: 'The legacy-homebrew repository is retired, leaving #727 pointing to a memory.' },
-  { date: '2019-04-26', kind: 'world', text: "'Avengers: Endgame' closes out a 22-film saga in a single weekend. #727's story arc is still going." },
+  { date: '2019-04-26', kind: 'world', text: "'Avengers: Endgame' closes out a 22-film saga in a single weekend." },
   { date: '2020-02-09', kind: 'world', text: "'Parasite' becomes the first non-English-language film to win the Best Picture Oscar." },
   { date: '2020-03-20', kind: 'world', text: "'Animal Crossing: New Horizons' lets millions build an island paradise from scratch." },
   { date: '2020-04-26', kind: 'milestone', text: "BrewTestBot's first automated bottle-bump commits land in homebrew-core, kicking off the Homebrew project's automation era." },
